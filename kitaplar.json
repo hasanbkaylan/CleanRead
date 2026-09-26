@@ -1,0 +1,19 @@
+{
+  "_aciklama": "Her sınıf altına ders ekleyip çıkarabilirsin. 'url' alanındaki {sayfa} yerine, o sayfanın numarası otomatik yazılır. 'ikon' alanı Material Symbols ikon adıdır (fonts.google.com/icons).",
+
+  "9": [],
+
+  "10": [],
+
+  "11": [
+    {
+      "id": "turk-dili-ve-edebiyati",
+      "ad": "Türk Dili ve Edebiyatı",
+      "yayin": "MEB Yayınları",
+      "ikon": "auto_stories",
+      "url": "https://evvelcevap.com/11-sinif-turk-dili-ve-edebiyati-ders-kitabi-cevaplari-meb-yayinlari-sayfa-{sayfa}/"
+    }
+  ],
+
+  "12": []
+}

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Cevapları oku · CleanRead</title>
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,600;7..72,700&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="appbar">
+  <a class="appbar-icon-btn" id="backLink" href="index.html" aria-label="Geri">
+    <span class="msi">arrow_back</span>
+  </a>
+  <div class="appbar-title">
+    <span class="eyebrow" id="eyebrow">CleanRead</span>
+    <span class="main" id="bookTitle">Yükleniyor…</span>
+  </div>
+</div>
+
+<main class="screen">
+
+  <div class="surface-card">
+    <div class="field" style="margin-bottom:14px;">
+      <label>Sayfa numarası</label>
+      <div class="page-stepper">
+        <button class="stepper-btn" id="prevPage" aria-label="Önceki sayfa"><span class="msi">chevron_left</span></button>
+        <div class="page-field">
+          <input type="number" id="pageNo" min="1" value="1">
+        </div>
+        <button class="stepper-btn" id="nextPage" aria-label="Sonraki sayfa"><span class="msi">chevron_right</span></button>
+      </div>
+    </div>
+    <button class="btn btn-filled btn-block" id="fetchBtn">
+      <span class="msi">search</span><span id="fetchBtnLabel">Cevapları getir</span>
+    </button>
+  </div>
+
+  <div class="status-banner" id="status"></div>
+
+  <div id="answersBlock"></div>
+  <div id="imagesBlock"></div>
+
+  <footer class="note">Cevaplar CleanRead tarafından okunaklı hale getirilir.</footer>
+</main>
+
+<div class="lightbox" id="lightbox">
+  <img id="lightboxImg" src="" alt="Büyütülmüş görsel" draggable="false">
+</div>
+
+<script src="app.js"></script>
+<script>
+  const sinif = CR.qs('sinif');
+  const dersId = CR.qs('ders');
+  const lightbox = CR.initLightbox();
+
+  const els = {
+    backLink: document.getElementById('backLink'),
+    eyebrow: document.getElementById('eyebrow'),
+    bookTitle: document.getElementById('bookTitle'),
+    pageNo: document.getElementById('pageNo'),
+    prevPage: document.getElementById('prevPage'),
+    nextPage: document.getElementById('nextPage'),
+    fetchBtn: document.getElementById('fetchBtn'),
+    fetchBtnLabel: document.getElementById('fetchBtnLabel'),
+    status: document.getElementById('status'),
+    answersBlock: document.getElementById('answersBlock'),
+    imagesBlock: document.getElementById('imagesBlock'),
+  };
+
+  let book = null;
+
+  if (!sinif || !dersId) {
+    location.replace('index.html');
+  } else {
+    els.backLink.href = `ders.html?sinif=${encodeURIComponent(sinif)}`;
+    els.eyebrow.textContent = `${sinif}. Sınıf`;
+
+    CR.loadKitaplar().then(data => {
+      const dersler = data[sinif] || [];
+      book = dersler.find(d => d.id === dersId);
+      if (!book) {
+        els.bookTitle.textContent = 'Ders bulunamadı';
+        setStatus('error', 'error', 'Bu ders bulunamadı.');
+        els.fetchBtn.disabled = true;
+        return;
+      }
+      els.bookTitle.textContent = book.ad;
+      fetchAnswers();
+    }).catch(() => {
+      els.bookTitle.textContent = 'Yüklenemedi';
+      setStatus('error', 'error', 'Bir şeyler ters gitti. Lütfen sayfayı yenile.');
+    });
+  }
+
+  function setStatus(kind, icon, html) {
+    if (!kind) { els.status.className = 'status-banner'; return; }
+    els.status.className = `status-banner show status-${kind}`;
+    els.status.innerHTML = `<span class="msi">${icon}</span><span>${html}</span>`;
+  }
+
+  function setLoading(loading) {
+    els.fetchBtn.disabled = loading;
+    els.fetchBtn.querySelector('.msi').style.display = loading ? 'none' : '';
+    if (loading && !els.fetchBtn.querySelector('.spin')) {
+      const s = document.createElement('span');
+      s.className = 'spin';
+      els.fetchBtn.insertBefore(s, els.fetchBtnLabel);
+    } else if (!loading) {
+      const s = els.fetchBtn.querySelector('.spin');
+      if (s) s.remove();
+    }
+    els.fetchBtnLabel.textContent = loading ? 'Getiriliyor…' : 'Cevapları getir';
+  }
+
+  function renderResults(answers, images, pageNo) {
+    els.answersBlock.innerHTML = '';
+    els.imagesBlock.innerHTML = '';
+
+    if (answers.length === 0 && images.length === 0) {
+      setStatus('warn', 'info', `Sayfa <b>${pageNo}</b> için cevap ya da görsel bulunamadı. Sayfa numarasını ya da dersi kontrol et.`);
+      return;
+    }
+    setStatus(null);
+
+    if (answers.length > 0) {
+      const wrap = document.createElement('div');
+      wrap.innerHTML = `<div class="result-heading"><span class="msi">edit_note</span> Cevap metinleri <span class="count">${answers.length}</span></div>`;
+      const list = document.createElement('div');
+      list.style.display = 'flex'; list.style.flexDirection = 'column'; list.style.gap = '10px';
+      answers.forEach(({ text, inlineImage }) => {
+        const div = document.createElement('div');
+        div.className = 'answer-item';
+        let html = CR.escapeHtml(text)
+          .replace(/(Cevap\s*:)/gi, '<strong>$1</strong>')
+          .replace(/(Soru\s*:)/gi, '<strong>$1</strong>');
+        if (inlineImage) html += `<img src="${inlineImage}" alt="Cevap görseli" loading="lazy" draggable="false">`;
+        div.innerHTML = html;
+        if (inlineImage) div.querySelector('img').addEventListener('click', () => lightbox.open(inlineImage));
+        list.appendChild(div);
+      });
+      wrap.appendChild(list);
+      els.answersBlock.appendChild(wrap);
+    }
+
+    if (images.length > 0) {
+      const wrap = document.createElement('div');
+      wrap.innerHTML = `<div class="result-heading"><span class="msi">image</span> Çözümlü sayfa görselleri <span class="count">${images.length}</span></div>`;
+      const grid = document.createElement('div');
+      grid.className = 'image-grid';
+      images.forEach((src, i) => {
+        const item = document.createElement('div');
+        item.className = 'image-item';
+        item.innerHTML = `
+          <img src="${src}" alt="Sayfa ${pageNo} çözümü ${i + 1}" loading="lazy" draggable="false">
+          <div class="cap"><span>Görsel ${i + 1}</span><a href="${src}" target="_blank" rel="noopener">Orijinali aç ↗</a></div>`;
+        item.querySelector('img').addEventListener('click', () => lightbox.open(src));
+        grid.appendChild(item);
+      });
+      wrap.appendChild(grid);
+      els.imagesBlock.appendChild(wrap);
+    }
+  }
+
+  async function fetchAnswers() {
+    if (!book) return;
+    const pageNo = els.pageNo.value.trim();
+    if (!pageNo) { setStatus('error', 'error', 'Lütfen bir sayfa numarası gir.'); return; }
+    const targetUrl = CR.buildTargetUrl(book.url, pageNo);
+
+    els.answersBlock.innerHTML = '';
+    els.imagesBlock.innerHTML = '';
+    setLoading(true);
+    setStatus('loading', 'progress_activity', `Sayfa <b>${pageNo}</b> için içerik alınıyor…`);
+
+    try {
+      const html = await CR.fetchContent(targetUrl);
+      const origin = new URL(targetUrl).origin;
+      const { answers, images } = CR.extractAnswers(html, origin);
+      renderResults(answers, images, pageNo);
+    } catch (err) {
+      setStatus('error', 'error', CR.escapeHtml(err.message));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function changePage(delta) {
+    const current = parseInt(els.pageNo.value) || 1;
+    els.pageNo.value = Math.max(1, current + delta);
+    fetchAnswers();
+  }
+
+  els.prevPage.addEventListener('click', () => changePage(-1));
+  els.nextPage.addEventListener('click', () => changePage(1));
+  els.fetchBtn.addEventListener('click', fetchAnswers);
+  els.pageNo.addEventListener('keydown', e => { if (e.key === 'Enter') fetchAnswers(); });
+</script>
+
+</body>
+</html>
