@@ -49,6 +49,7 @@ const CR = (() => {
     if (/\.gif(\?.*)?$/i.test(src)) return true;
     if (SUBJECT_ICON_FILES.test(src)) return true;
     if (/\/cdn-minio\/uploads\/library\//i.test(src)) return true;
+    if (/\/legacy-media\//i.test(src)) return true;     // sayfanın kendi kapak/önizleme görseli — cevap içeriği değil
     if (/logo|avatar|banner|icon|pixel|emoji|quick|share|gravatar/i.test(src)) return true;
     return false;
   }

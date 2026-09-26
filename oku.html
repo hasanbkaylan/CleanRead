@@ -31,7 +31,8 @@
       <div class="page-stepper">
         <button class="stepper-btn" id="prevPage" aria-label="Önceki sayfa"><span class="msi">chevron_left</span></button>
         <div class="page-field">
-          <input type="number" id="pageNo" min="1" value="1">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" id="pageNo" value="1"
+                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
         <button class="stepper-btn" id="nextPage" aria-label="Sonraki sayfa"><span class="msi">chevron_right</span></button>
       </div>
@@ -202,6 +203,14 @@
   els.pageNo.addEventListener('keydown', e => { if (e.key === 'Enter') fetchAnswers(); });
   els.pageNo.addEventListener('contextmenu', e => e.preventDefault());
   els.pageNo.addEventListener('selectstart', e => e.preventDefault());
+  els.pageNo.addEventListener('input', () => {
+    els.pageNo.value = els.pageNo.value.replace(/[^0-9]/g, '');
+  });
+  // Herhangi bir seçim oluşursa anında imleca daralt — seçim tabanlı "Google'da ara" balonunu engeller
+  els.pageNo.addEventListener('select', () => {
+    const pos = els.pageNo.value.length;
+    els.pageNo.setSelectionRange(pos, pos);
+  });
 </script>
 
 </body>
