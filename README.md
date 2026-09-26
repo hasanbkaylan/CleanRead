@@ -38,7 +38,7 @@ Her şey `kitaplar.json` içinde. Yeni bir ders eklemek için ilgili sınıfın 
 
 ## Logo
 
-450×300 boyutundaki logonu `logo.png` adıyla bu klasöre koy. Logo zaten "CleanRead" yazısını içerdiği için arayüzde ayrıca metin olarak tekrar yazılmıyor, sadece görsel kullanılıyor. Dosya henüz yoksa üst çubukta boş bırakılır, site yine çalışır.
+450×300 boyutundaki logonu `logo.png` adıyla bu klasöre koy. Logo zaten "CleanRead" yazısını içerdiği için arayüzde ayrıca metin olarak tekrar yazılmıyor, sadece görsel kullanılıyor. Dosya henüz yoksa üst çubukta boş bırakılır, site yine çalışır.  
 
 ## GitHub Pages'te yayınlama
 
