@@ -200,6 +200,8 @@
   els.nextPage.addEventListener('click', () => changePage(1));
   els.fetchBtn.addEventListener('click', fetchAnswers);
   els.pageNo.addEventListener('keydown', e => { if (e.key === 'Enter') fetchAnswers(); });
+  els.pageNo.addEventListener('contextmenu', e => e.preventDefault());
+  els.pageNo.addEventListener('selectstart', e => e.preventDefault());
 </script>
 
 </body>

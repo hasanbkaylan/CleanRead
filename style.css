@@ -215,6 +215,7 @@ img{ max-width: 100%; -webkit-user-drag: none; user-select: none; -webkit-touch-
   background: var(--md-surface); color: var(--md-on-surface); outline: none;
   transition: border-color .15s;
   -moz-appearance: textfield;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
 }
 .page-field input::-webkit-outer-spin-button, .page-field input::-webkit-inner-spin-button{ -webkit-appearance: none; margin: 0; }
 .page-field input:focus{ border-color: var(--md-primary); }
