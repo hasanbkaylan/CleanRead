@@ -16,6 +16,13 @@
       "yayin": "MEB Yayınları",
       "ikon": "history_edu",
       "url": "https://evvelcevap.com/11-sinif-tarih-ders-kitabi-cevaplari-meb-yayinlari-sayfa-{sayfa}/"
+    },
+    {
+      "id": "cografya",
+      "ad": "Coğrafya",
+      "yayin": "MEB Yayınları",
+      "ikon": "public",
+      "url": "https://evvelcevap.com/11-sinif-cografya-kitabi-cevaplari-sayfa-{sayfa}/"
     }
   ],
   "12": []
