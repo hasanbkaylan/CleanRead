@@ -23,6 +23,13 @@
       "yayin": "MEB Yayınları",
       "ikon": "public",
       "url": "https://evvelcevap.com/11-sinif-cografya-kitabi-cevaplari-sayfa-{sayfa}/"
+    },
+    {
+      "id": "din-kulturu",
+      "ad": "Din Kültürü ve Ahlak Bilgisi",
+      "yayin": "MEB Yayınları",
+      "ikon": "mosque",
+      "url": "https://evvelcevap.com/11-sinif-din-kulturu-ders-kitabi-cevaplari-sayfa-{sayfa}/"
     }
   ],
   "12": []
